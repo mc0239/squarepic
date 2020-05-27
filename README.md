@@ -27,6 +27,13 @@ $ go run .
 On first run, program will generate a config file and exit. 
 Edit configuration file (if needed) and re-run.
 
+Example requests:
+```
+http://localhost:9001/literally-anything!!!
+http://localhost:9001/aaaaa?size=100
+http://localhost:9001/something/very/cool?size=200&squares=10
+```
+
 ## Building
 
 Instead of `run`, do `build`:
