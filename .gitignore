@@ -1,0 +1,4 @@
+*.png
+*.exe
+squares.config
+!banner.png
