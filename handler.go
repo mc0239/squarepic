@@ -15,6 +15,7 @@ type generationParams struct {
 	help         bool
 	size         int
 	squaresCount int
+	mirror       bool
 }
 
 func extractQueryParams(params url.Values) generationParams {
@@ -22,6 +23,7 @@ func extractQueryParams(params url.Values) generationParams {
 		help:         false,
 		size:         globalConfig.defaultSize,
 		squaresCount: globalConfig.defaultSquaresCount,
+		mirror:       globalConfig.mirror,
 	}
 
 	if s := params.Get("help"); len(s) > 0 {
@@ -41,6 +43,13 @@ func extractQueryParams(params url.Values) generationParams {
 		size, err := strconv.Atoi(s)
 		if err == nil {
 			genParams.size = size
+		}
+	}
+
+	if s := params.Get("mirror"); len(s) > 0 {
+		mirror, err := strconv.ParseBool(s)
+		if err == nil {
+			genParams.mirror = mirror
 		}
 	}
 
@@ -68,6 +77,7 @@ func getGeneratedImageFilename(hashedPath int64, params generationParams) string
 	return strconv.FormatUint(uint64(hashedPath), 16) +
 		"_" + strconv.Itoa(params.size) +
 		"_" + strconv.Itoa(params.squaresCount) +
+		"_" + formatBoolN(params.mirror) +
 		".png"
 }
 

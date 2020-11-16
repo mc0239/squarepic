@@ -22,7 +22,8 @@ var globalConfig = struct {
 	minSize             int
 	maxSize             int
 	defaultSize         int
-}{"127.0.0.1:9001", "images/", 5, 5, 5000, 250}
+	mirror              bool
+}{"127.0.0.1:9001", "images/", 5, 5, 5000, 250, false}
 
 func initImagesFolder() {
 	imagesFolder := globalConfig.imagesFolder
@@ -106,6 +107,12 @@ func readGlobalConfig() {
 			if err != nil {
 				logger.Warning("Invalid config value %s", keyval[1])
 				globalConfig.defaultSize = 250
+			}
+		case "mirror":
+			globalConfig.mirror, err = strconv.ParseBool(keyval[1])
+			if err != nil {
+				logger.Warning("Invalid config value %s", keyval[1])
+				globalConfig.mirror = false
 			}
 		case "address":
 			globalConfig.address = strings.TrimSpace(keyval[1])

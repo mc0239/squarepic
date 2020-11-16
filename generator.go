@@ -32,21 +32,42 @@ func generateImage(filepath string, params generationParams, rand *rand.Rand) er
 		for xu := 0; xu < params.squaresCount; xu++ {
 			isColoredUnit := rand.Intn(10) > 6
 			isShadowdUnit := rand.Intn(10) > 4
+
 			var shadow uint8
 			if isShadowdUnit {
 				shadow = uint8(rand.Intn(6) * 3)
 			} else {
 				shadow = 0
 			}
+
+			var selectedColor color.Color
+			if isColoredUnit {
+				selectedColor = randomColor
+			} else {
+				selectedColor = color.NRGBA{R: 255 - shadow, G: 255 - shadow, B: 255 - shadow, A: 255}
+			}
+
+			var scHalf = params.squaresCount / 2
+			if params.squaresCount%2 == 1 {
+				scHalf++
+			}
+
+			if params.mirror && xu >= scHalf {
+				// get the color from left side
+				ax := (params.squaresCount / 2) - (xu - (params.squaresCount / 2))
+				if params.squaresCount%2 == 0 {
+					// that's one way of dealing with even/odd square counts...
+					ax--
+				}
+				selectedColor = img.At(ax*unit, yu*unit)
+			}
+
 			for y := unit * yu; y < unit*(yu+1); y++ {
 				for x := unit * xu; x < unit*(xu+1); x++ {
-					if isColoredUnit {
-						img.Set(x, y, randomColor)
-					} else {
-						img.Set(x, y, color.NRGBA{R: 255 - shadow, G: 255 - shadow, B: 255 - shadow, A: 255})
-					}
+					img.Set(x, y, selectedColor)
 				}
 			}
+
 		}
 	}
 
