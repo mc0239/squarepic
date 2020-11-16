@@ -16,7 +16,7 @@ const configFilePath = "squares.config"
 var logger = logm.New("root")
 
 var globalConfig = struct {
-	address				string
+	address             string
 	imagesFolder        string
 	defaultSquaresCount int
 	minSize             int
@@ -52,7 +52,7 @@ func initConfigFile() {
 			log.Fatal(err)
 		}
 
-		configFile.WriteString("address=127.0.0.1:9001\nimages_folder=images/\ndefault_squares_count=5\nmin_size=5\nmax_size=5000\ndefault_size=250")
+		configFile.WriteString(defaultConfigText)
 		logger.Log(logm.LvlNotice, "Config file '%s' created with default values", configFilePath)
 		logger.Log(logm.LvlNotice, "Edit config file if needed and rerun program")
 		os.Exit(0)

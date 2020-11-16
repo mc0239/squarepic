@@ -12,14 +12,20 @@ import (
 )
 
 type generationParams struct {
+	help         bool
 	size         int
 	squaresCount int
 }
 
 func extractQueryParams(params url.Values) generationParams {
 	genParams := generationParams{
+		help:         false,
 		size:         globalConfig.defaultSize,
 		squaresCount: globalConfig.defaultSquaresCount,
+	}
+
+	if s := params.Get("help"); len(s) > 0 {
+		genParams.help = true
 	}
 
 	// extract square count or use default
@@ -73,6 +79,13 @@ func handleNotFound(w http.ResponseWriter, r *http.Request) {
 func handleGenerateImageRequest(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
+	params := extractQueryParams(r.URL.Query())
+
+	if params.help == true {
+		io.WriteString(w, helpText)
+		return
+	}
+
 	// generate hashed value and a random number generator with seed from hashed
 	// value
 	reqPath := r.URL.Path
@@ -85,7 +98,6 @@ func handleGenerateImageRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	randGen := rand.New(rand.NewSource(hashedReqPath))
-	params := extractQueryParams(r.URL.Query())
 
 	// unique part of file name is hashed path in hex
 	filename := getGeneratedImageFilename(hashedReqPath, params)
