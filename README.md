@@ -27,11 +27,17 @@ $ go run .
 On first run, program will generate a config file and exit. 
 Edit configuration file (if needed) and re-run.
 
+Making a request with non-empty `help` GET parameter displays a help page with possible options:
+```
+http://localhost:9001/?help=1
+```
+
 Example requests:
 ```
 http://localhost:9001/literally-anything!!!
 http://localhost:9001/aaaaa?size=100
 http://localhost:9001/something/very/cool?size=200&squares=10
+http://localhost:9001/bzk?size=10&mirror=1
 ```
 
 ## Building
