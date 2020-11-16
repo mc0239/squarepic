@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,13 +16,13 @@ const configFilePath = "squares.config"
 var logger = logm.New("root")
 
 var globalConfig = struct {
-	port                int
+	address				string
 	imagesFolder        string
 	defaultSquaresCount int
 	minSize             int
 	maxSize             int
 	defaultSize         int
-}{9001, "images/", 5, 5, 5000, 250}
+}{"127.0.0.1:9001", "images/", 5, 5, 5000, 250}
 
 func initImagesFolder() {
 	imagesFolder := globalConfig.imagesFolder
@@ -53,7 +52,7 @@ func initConfigFile() {
 			log.Fatal(err)
 		}
 
-		configFile.WriteString("port=9001\nimages_folder=images/\ndefault_squares_count=5\nmin_size=5\nmax_size=5000\ndefault_size=250")
+		configFile.WriteString("address=127.0.0.1:9001\nimages_folder=images/\ndefault_squares_count=5\nmin_size=5\nmax_size=5000\ndefault_size=250")
 		logger.Log(logm.LvlNotice, "Config file '%s' created with default values", configFilePath)
 		logger.Log(logm.LvlNotice, "Edit config file if needed and rerun program")
 		os.Exit(0)
@@ -108,12 +107,8 @@ func readGlobalConfig() {
 				logger.Warning("Invalid config value %s", keyval[1])
 				globalConfig.defaultSize = 250
 			}
-		case "port":
-			globalConfig.port, err = strconv.Atoi(keyval[1])
-			if err != nil {
-				logger.Warning("Invalid config value %s", keyval[1])
-				globalConfig.port = 9001
-			}
+		case "address":
+			globalConfig.address = strings.TrimSpace(keyval[1])
 		default:
 			logger.Warning("Invalid config line %s", line)
 		}
@@ -136,6 +131,6 @@ func main() {
 	initImagesFolder()
 	initRequestHandler()
 
-	logger.Info("Started serving on port %d", globalConfig.port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", globalConfig.port), nil))
+	logger.Info("Started serving on address %s", globalConfig.address)
+	log.Fatal(http.ListenAndServe(globalConfig.address, nil))
 }
